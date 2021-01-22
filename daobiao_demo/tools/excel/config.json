@@ -1,0 +1,48 @@
+{
+	"input": [
+		{ "file": "../../game/data/excel/technology_info.xls", "encode": "GBK"},
+		{ "file": "../../game/data/excel/policy_info.xls", "encode": "GBK"}
+	],
+	"input_dir": { "file": "../../game/data/excel", "encode": "GBK"},
+	"parser": {
+		"floating_numbers": false
+	},
+	"output": "../../game/data",
+	"exporter": {
+		"json": {
+			"enabled": false,
+			"indent": 2,
+			"variant_array_length": true,
+			"incompatible_as_default": true,
+			"default": {
+				"boolean": false,
+				"number": 0,
+				"string": "",
+				"any": null
+			}
+		},
+		"typescript": {
+			"enabled": false,
+			"type_extention": "Data",
+			"type_prefix": "",
+			"file_name": "data"
+		},
+		"csharp": {
+			"enabled": false,
+			"namespace": "game.data",
+			"base_type": "tiny.data.UniqueIDObject",
+			"type_extention": "",
+			"type_prefix": "",
+			"file_name": "data",
+			"ignore_id": true
+		},
+		"gdscript": {
+			"enabled": true,
+			"type_extention": "Data",
+			"type_prefix": "",
+			"index_file": "configs",
+			"tool": true,
+			"autoload": true
+		}
+	}
+}

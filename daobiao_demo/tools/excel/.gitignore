@@ -1,0 +1,6 @@
+*.xls
+*.xlsx
+*.exe
+*.pyc
+data
+**/.DS_Store
