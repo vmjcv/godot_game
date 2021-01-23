@@ -1,0 +1,32 @@
+; Engine configuration file.
+; It's best edited using the editor UI and not directly,
+; since the parameters that go here are not all obvious.
+;
+; Format:
+;   [section] ; section goes between []
+;   param=value ; assign values to parameters
+
+config_version=4
+
+_global_script_classes=[ {
+"base": "Node",
+"class": "BaseNode",
+"language": "GDScript",
+"path": "res://script/test1/test_api.gd"
+} ]
+_global_script_class_icons={
+"BaseNode": ""
+}
+
+[application]
+
+config/name="Game"
+config/icon="res://icon.png"
+
+[autoload]
+
+Configs="*res://data/gdscript/configs.gd"
+
+[rendering]
+
+environment/default_environment="res://default_env.tres"
