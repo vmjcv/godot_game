@@ -4,7 +4,7 @@
 import os, json, xlrd
 
 SKIP_TAG = '@skip'
-	
+
 # 读取原始数据
 def load_tabels(file, encode, configs):
 	if os.path.isfile(file):
@@ -16,7 +16,7 @@ def load_tabels(file, encode, configs):
 			# 忽略 @skip 表
 			if str(sheet_name).strip().startswith(SKIP_TAG): continue
 			table_data = []
-			
+
 			sheet = data.sheet_by_name(sheet_name)
 			title_row = None
 			for i in range(0, sheet.nrows):
