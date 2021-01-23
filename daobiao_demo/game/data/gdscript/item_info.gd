@@ -11,7 +11,7 @@ class item_infoData:
 		name = p_name
 
 static func load_configs():
-	return [
-		item_infoData.new(1, "陪我熬过整个高中生活的笔，已经快没水了..", "钢笔"),
-		item_infoData.new(2, "虽然红色的花看起来很有生命力，但其实很快就枯萎了..", "红花"),
-	]
+	return {
+		1: item_infoData.new(1, "this is a pen", "pen"),
+		2: item_infoData.new(2, "this is water", "water"),
+	}

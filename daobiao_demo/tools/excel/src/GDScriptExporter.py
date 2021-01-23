@@ -71,27 +71,38 @@ class GDScriptExporter(Exporter):
 		idx = 0
 		params = ""
 		initializers = ""
+		key_name = "id"
 		for key in props:
 			# declear
+			key_list = key.split("_")
+			cur_key = key
+			if key_list[-1] == "key":
+				key_list.pop()
+				cur_key = "_".join(key_list)
+
 			gd_type = first_line[key] or self.detect_type(second_line[key])
 			gd_type = ": " + gd_type if gd_type else ""
-			declear = self.line("var {}{}".format(key, gd_type), 1)
+			declear = self.line("var {}{}".format(cur_key, gd_type), 1)
 			script_text += declear
 			# parms
-			param = "p_" + key
+			param = "p_" + cur_key
 			if idx > 0: params += ", "
 			params +=  param
 			# initialize
-			initializer = self.line("{} = {}".format(key, param), 2)
+			initializer = self.line("{} = {}".format(cur_key, param), 2)
 			initializers += initializer
 			idx += 1
+			if cur_key != key:
+				# 只取最后一个以_key作为字典的key
+				key_name = key
+
 		constructor_func = self.line("func _init({}):".format(params), 1)
 		script_text += constructor_func
 		script_text += initializers
 
 		script_text += self.line()
 		script_text += self.line("static func load_configs():")
-		script_text += self.line("return [", 1)
+		script_text += self.line("return {", 1)
 		for row in data[1:]:
 			args = ""
 			idx = 0
@@ -99,9 +110,10 @@ class GDScriptExporter(Exporter):
 				if idx > 0: args += ", "
 				args += self.convert_value(row[key],first_line[key])
 				idx += 1
-			line = self.line("{}.new({}),".format(class_name, args), 2)
+			key_id = self.convert_value(row[key_name], first_line[key_name])
+			line = self.line("{}: {}.new({}),".format(key_id,class_name, args), 2)
 			script_text += line
-		script_text += self.line("]", 1)
+		script_text += self.line("}", 1)
 		file = open(out_path, 'w', encoding="utf8")
 		file.write(script_text)
 
@@ -125,7 +137,11 @@ class GDScriptExporter(Exporter):
 		functions += self.line("return configs[table] if table in configs else null", 1)
 		functions += self.line()
 		functions += self.line("func get_table(table_name: String):")
-		functions += self.line("return get_table_configs(get(table_name + "Data"))", 1)
+		functions += self.line("return get_table_configs(get(table_name + 'Data'))", 1)
+		functions += self.line()
+		functions += self.line("func get_table_by_key(table_name: String, key):")
+		functions += self.line("return get_table(table_name)[key]", 1)
+		functions += self.line()
 
 		configs = self.line("var configs = {")
 		configs_initializers = self.line("func _init():")
@@ -135,9 +151,10 @@ class GDScriptExporter(Exporter):
 			script_const_name = name + "Script"
 			scripts_consts += self.line('const {} = preload("{}.gd")'.format(script_const_name, name))
 			classes_consts += self.line('const {0} = {1}.{0}'.format(self.get_class_name(name), script_const_name))
-			configs += self.line("{}: [],".format(self.get_class_name(name)), 1)
+			configs += self.line("{}: ".format(self.get_class_name(name))+"{},", 1)
 			configs_initializers += self.line("configs[{}] = {}.load_configs()".format(self.get_class_name(name), script_const_name), 1)
-			unique_id_depot_setup += self.line("for d in configs[{}]: unique_id_depot[d.get_instance_id()] = d".format(self.get_class_name(name)), 1)
+			unique_id_depot_setup += self.line(
+				"for d in configs[{}]: unique_id_depot[configs[{}][d].get_instance_id()] = d".format(self.get_class_name(name), self.get_class_name(name)), 1)
 		configs += self.line("}")
 
 		index_file_content += scripts_consts

@@ -18,6 +18,10 @@ _global_script_class_icons={
 config/name="Game"
 config/icon="res://icon.png"
 
+[autoload]
+
+Configs="*res://data/gdscript/configs.gd"
+
 [rendering]
 
 environment/default_environment="res://default_env.tres"
