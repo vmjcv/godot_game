@@ -5,8 +5,8 @@ const  pow_16_value = pow(2, 16)
 export (float, 0.1, 50.0, 0.1) var click_duration_threshold = 25.0
 onready var canva_material = CANVA_MATERIAL_SCENE.duplicate(true)
 
-signal long_pressed()
-signal long_released()
+signal long_pressed
+signal long_released
 
 var __signal_sent = false
 var __current_duration = 0
@@ -63,3 +63,4 @@ func _update_button():
 
 	var value = 1.0 - nearest_po2_decimal(__current_duration / click_duration_threshold, 0.0, 1.0)
 	canva_material.set_shader_param("loading", value)
+	print(value)

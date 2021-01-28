@@ -2,7 +2,7 @@
 
 [sub_resource type="Shader" id=1]
 code = "shader_type canvas_item;
-
+render_mode blend_disabled;
 uniform float loading = 1.0;
 uniform float alpha = 0.8;
 
