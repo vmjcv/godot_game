@@ -1,0 +1,12 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://script/long_click_button.gd" type="Script" id=1]
+
+[node name="TextureButton" type="Button"]
+margin_right = 40.0
+margin_bottom = 40.0
+text = "1111111111111"
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}

@@ -1,0 +1,18 @@
+[gd_resource type="ShaderMaterial" load_steps=2 format=2]
+
+[sub_resource type="Shader" id=1]
+code = "shader_type canvas_item;
+
+uniform float loading = 1.0;
+uniform float alpha = 0.8;
+
+void fragment(){
+	if ((1.0 - UV.x) < loading && loading < 1.0) {
+		COLOR.a *= alpha;
+	}
+}"
+
+[resource]
+shader = SubResource( 1 )
+shader_param/loading = 1.0
+shader_param/alpha = 0.8
