@@ -2,11 +2,12 @@
 
 [sub_resource type="Shader" id=1]
 code = "shader_type canvas_item;
-render_mode blend_disabled;
+
 uniform float loading = 1.0;
 uniform float alpha = 0.8;
 
 void fragment(){
+	COLOR=texture(TEXTURE, UV);
 	if ((1.0 - UV.x) < loading && loading < 1.0) {
 		COLOR.a *= alpha;
 	}

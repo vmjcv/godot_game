@@ -63,4 +63,3 @@ func _update_button():
 
 	var value = 1.0 - nearest_po2_decimal(__current_duration / click_duration_threshold, 0.0, 1.0)
 	canva_material.set_shader_param("loading", value)
-	print(value)

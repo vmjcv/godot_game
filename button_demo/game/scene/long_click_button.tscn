@@ -1,25 +1,13 @@
-[gd_scene load_steps=4 format=2]
+[gd_scene load_steps=2 format=2]
 
 [ext_resource path="res://script/long_click_button.gd" type="Script" id=1]
-[ext_resource path="res://shader/long_click_button.tres" type="Material" id=2]
-
-[sub_resource type="StyleBoxFlat" id=1]
-bg_color = Color( 0.980392, 0.301961, 0.301961, 1 )
-corner_radius_top_left = 5
-corner_radius_top_right = 5
-corner_radius_bottom_right = 5
-corner_radius_bottom_left = 5
 
 [node name="TextureButton" type="Button"]
-material = ExtResource( 2 )
 margin_right = 40.0
 margin_bottom = 40.0
-rect_clip_content = true
-custom_styles/hover = SubResource( 1 )
-custom_styles/pressed = SubResource( 1 )
-custom_styles/normal = SubResource( 1 )
-text = "over"
-expand_icon = true
+focus_mode = 0
+enabled_focus_mode = 0
+text = "aaaaaaa"
 script = ExtResource( 1 )
 __meta__ = {
 "_edit_use_anchors_": false
