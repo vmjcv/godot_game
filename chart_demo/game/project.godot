@@ -8,9 +8,14 @@
 
 config_version=4
 
-_global_script_classes=[  ]
+_global_script_classes=[ {
+"base": "ReferenceRect",
+"class": "Chart",
+"language": "GDScript",
+"path": "res://script/chart.gd"
+} ]
 _global_script_class_icons={
-
+"Chart": "res://texture/chart_icon.png"
 }
 
 [application]

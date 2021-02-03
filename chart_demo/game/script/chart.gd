@@ -1,5 +1,5 @@
-tool
 extends ReferenceRect
+class_name Chart,"res://texture/chart_icon.png"
 
 enum LABELS_TO_SHOW {
 	NO_LABEL = 0,
@@ -25,13 +25,13 @@ export(int, 'Line', 'Pie') var chart_type = CHART_TYPE.LINE_CHART setget set_cha
 export var line_width = 2.0
 export(float, 1.0, 2.0, 0.1) var hovered_radius_ratio = 1.1
 export(float, 0.0, 1.0, 0.01) var chart_background_opacity = 0.334
-
+export(int,FLAGS,"X_LABEL","Y_LABEL","LEGEND_LABEL") var show_label = LABELS_TO_SHOW.NO_LABEL setget set_labels
+export(float) var animation_duration = 1.0
 var current_data = []
 var min_value = 0.0
 var max_value = 1.0
-var current_animation_duration = 1.0
+
 var current_point_color = {}
-var current_show_label = LABELS_TO_SHOW.NO_LABEL
 var current_mouse_over = null
 
 class PieChartData:
@@ -99,6 +99,11 @@ func _ready():
 
 	set_process_input(chart_type == CHART_TYPE.PIE_CHART)
 	pie_chart_current_data.hovered_radius_ratio = hovered_radius_ratio
+	set_labels(show_label)
+	
+	# 测试数据
+	test_chart()
+	test_reset()
 
 func set_chart_type(value):
 	if chart_type != value:
@@ -109,6 +114,8 @@ func set_chart_type(value):
 
 		update()
 		tween_node.start()
+		# 测试数据,之间添加数据
+		test_reset()
 
 func _input(event):
 	if event is InputEventMouseMotion:
@@ -160,37 +167,25 @@ func update_tooltip(data = null):
 	if update_frame:
 		update()
 
-func initialize(show_label, points_color = {}, animation_duration = 1.0):
-	set_labels(show_label)
-	current_animation_duration = animation_duration
 
-	for key in points_color:
-		current_point_color[key] = {
-			dot = points_color[key],
-			line = Color(
-				points_color[key].r,
-				points_color[key].g,
-				points_color[key].b,
-				points_color[key].a * COLOR_LINE_RATIO)
-		}
 
-func set_labels(show_label):
-	current_show_label = show_label
+func set_labels(_show_label):
+	show_label = _show_label
 
 	# Reset values
 	min_y = 0.0
 	min_x = 0.0
-	max_y = get_size().y
 	max_x = get_size().x
+	max_y = get_size().y
 
-	if current_show_label & LABELS_TO_SHOW.X_LABEL:
+	if show_label & LABELS_TO_SHOW.X_LABEL:
 		max_y -= LABEL_SPACE.y
 
-	if current_show_label & LABELS_TO_SHOW.Y_LABEL:
+	if show_label & LABELS_TO_SHOW.Y_LABEL:
 		min_x += LABEL_SPACE.x
 		max_x -= min_x
 
-	if current_show_label & LABELS_TO_SHOW.LEGEND_LABEL:
+	if show_label & LABELS_TO_SHOW.LEGEND_LABEL:
 		min_y += LABEL_SPACE.y
 		max_y -= min_y
 
@@ -351,7 +346,7 @@ func draw_line_chart():
 			Vector2(point.x, vertical_line[1].y),
 			interline_color, 1.0)
 
-		if current_show_label & LABELS_TO_SHOW.X_LABEL:
+		if show_label & LABELS_TO_SHOW.X_LABEL:
 			var label = tr(point_data.label).left(3)
 			var string_decal = Vector2(14, -LABEL_SPACE.y + 8.0)
 
@@ -359,7 +354,7 @@ func draw_line_chart():
 
 	_draw_chart_background(pointListObject)
 
-	if current_show_label & LABELS_TO_SHOW.Y_LABEL:
+	if show_label & LABELS_TO_SHOW.Y_LABEL:
 		var ordinate_values = compute_ordinate_values(max_value, min_value)
 
 		for ordinate_value in ordinate_values:
@@ -371,7 +366,7 @@ func draw_line_chart():
 	draw_line(horizontal_line[0], horizontal_line[1], grid_color, 1.0) # x轴
 
 func _draw_labels():
-	if current_show_label & LABELS_TO_SHOW.LEGEND_LABEL:
+	if show_label & LABELS_TO_SHOW.LEGEND_LABEL:
 		var nb_labels = current_point_color.keys().size()
 		var position = Vector2(min_x, 0.0)
 
@@ -428,7 +423,7 @@ func compute_sprites(points_data):
 		sprite.connect('mouse_exited', self, '_on_mouse_out', [key])
 
 		# Appliquer le déplacement
-		animation_move_dot(sprite, end_pos - texture_size * global_scale / 2.0, global_scale, 0.0, current_animation_duration)
+		animation_move_dot(sprite, end_pos - texture_size * global_scale / 2.0, global_scale, 0.0, animation_duration)
 
 		sprites[key] = {
 			sprite = sprite,
@@ -560,8 +555,6 @@ func animation_move_dot(node, end_pos, end_scale, delay = 0.0, duration = 0.5):
 	var current_pos = node.get_position()
 	var current_scale = node.get_scale()
 	tween_node.interpolate_property(node, 'rect_position', current_pos, end_pos, duration, Tween.TRANS_CIRC, Tween.EASE_OUT, delay)
-	print(end_scale)
-	end_scale = Vector2(1.0,1.0)
 	tween_node.interpolate_property(node, 'rect_scale', current_scale, end_scale, duration, Tween.TRANS_CIRC, Tween.EASE_OUT, delay)
 	tween_node.interpolate_method(self, '_update_draw', 0.0, 1.0, duration, Tween.TRANS_CIRC, Tween.EASE_OUT, delay)
 
@@ -626,3 +619,128 @@ func compute_ordinate_values(max_value, min_value):
 			result.push_back(value)
 
 	return result
+
+
+func add_color(key_name,key_color):
+	current_point_color[key_name] = {
+		dot = key_color,
+		line = Color(
+			key_color.r,
+			key_color.g,
+			key_color.b,
+			key_color.a * COLOR_LINE_RATIO)
+	}
+
+func test_chart():
+	add_color("depenses",Color(1.0, 0.18, 0.18))
+	add_color("recettes",Color(0.58, 0.92, 0.07))
+	add_color("interet",Color(0.5, 0.22, 0.6))
+
+func test_reset():
+	create_new_point({
+		label = 'JANVIER',
+		values = {
+			depenses = 150,
+			recettes = 1025,
+			interet = 1050,
+		}
+	})
+
+	create_new_point({
+		label = 'FEVRIER',
+		values = {
+			depenses = 500,
+			recettes = 1020,
+			interet = -150
+		}
+	})
+
+	create_new_point({
+		label = 'MARS',
+		values = {
+			depenses = 10,
+			recettes = 1575,
+			interet = -450
+		}
+	})
+
+	create_new_point({
+		label = 'AVRIL',
+		values = {
+			depenses = 350,
+			recettes = 750,
+			interet = -509
+		}
+	})
+
+	create_new_point({
+		label = 'MAI',
+		values = {
+			depenses = 1350,
+			recettes = 750,
+			interet = -505
+		}
+	})
+
+	create_new_point({
+		label = 'JUIN',
+		values = {
+			depenses = 350,
+			recettes = 1750,
+			interet = -950
+		}
+	})
+
+	create_new_point({
+		label = 'JUILLET',
+		values = {
+			depenses = 100,
+			recettes = 1500,
+			interet = -350
+		}
+	})
+
+	create_new_point({
+		label = 'AOUT',
+		values = {
+			depenses = 350,
+			recettes = 750,
+			interet = -500
+		}
+	})
+
+	create_new_point({
+		label = 'SEPTEMBRE',
+		values = {
+			depenses = 1350,
+			recettes = 750,
+			interet = -50
+		}
+	})
+
+	create_new_point({
+		label = 'OCTOBRE',
+		values = {
+			depenses = 350,
+			recettes = 1750,
+			interet = -750
+		}
+	})
+
+	create_new_point({
+		label = 'NOVEMBRE',
+		values = {
+			depenses = 450,
+			recettes = 200,
+			interet = -150
+		}
+	})
+
+	create_new_point({
+		label = 'DECEMBRE',
+		values = {
+			depenses = 1350,
+			recettes = 500,
+			interet = -500
+		}
+	})
