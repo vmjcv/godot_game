@@ -2,7 +2,7 @@
 
 [ext_resource path="res://script/long_click_button.gd" type="Script" id=1]
 
-[node name="TextureButton" type="Button"]
+[node name="LongClickButton" type="Button"]
 margin_right = 40.0
 margin_bottom = 40.0
 focus_mode = 0
