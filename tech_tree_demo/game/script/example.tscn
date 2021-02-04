@@ -1,0 +1,64 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://script/example.gd" type="Script" id=1]
+[ext_resource path="res://scene/techtree.tscn" type="PackedScene" id=2]
+
+[node name="main" type="Control"]
+margin_right = 40.0
+margin_bottom = 40.0
+size_flags_horizontal = 2
+size_flags_vertical = 2
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+line_color_enabled = Color( 0.0392157, 0.439216, 0.952941, 1 )
+line_color_disabled = Color( 1, 1, 1, 1 )
+line_width = 2
+
+[node name="techtree" parent="." instance=ExtResource( 2 )]
+margin_left = 278.0
+margin_top = 115.0
+margin_right = 685.0
+margin_bottom = 473.0
+radius = 32.0
+
+[node name="container" type="VBoxContainer" parent="."]
+
+[node name="clear" type="Button" parent="container"]
+margin_right = 159.0
+margin_bottom = 20.0
+text = "Clear"
+
+[node name="generate" type="Button" parent="container"]
+margin_top = 24.0
+margin_right = 159.0
+margin_bottom = 44.0
+text = "Generate"
+
+[node name="root_label" type="Label" parent="container"]
+margin_top = 48.0
+margin_right = 159.0
+margin_bottom = 62.0
+text = "Number of root nodes"
+
+[node name="root" type="SpinBox" parent="container"]
+margin_top = 66.0
+margin_right = 159.0
+margin_bottom = 90.0
+
+[node name="node_label" type="Label" parent="container"]
+margin_top = 94.0
+margin_right = 159.0
+margin_bottom = 108.0
+text = "Number of node per root"
+
+[node name="node" type="SpinBox" parent="container"]
+margin_top = 112.0
+margin_right = 159.0
+margin_bottom = 136.0
+
+[connection signal="pressed" from="container/clear" to="techtree" method="clear"]
+[connection signal="pressed" from="container/generate" to="." method="initialize"]
+[connection signal="value_changed" from="container/root" to="." method="set_nb_root_to_create"]
+[connection signal="value_changed" from="container/node" to="." method="set_nb_points_to_create"]
