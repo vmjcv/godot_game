@@ -8,6 +8,16 @@
 
 config_version=4
 
+_global_script_classes=[ {
+"base": "ReferenceRect",
+"class": "TechTree",
+"language": "GDScript",
+"path": "res://script/techtree.gd"
+} ]
+_global_script_class_icons={
+"TechTree": ""
+}
+
 [application]
 
 config/name="Game"

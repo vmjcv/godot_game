@@ -1,5 +1,5 @@
 extends ReferenceRect
-
+class_name TechTree
 const BUTTON_SCENE = preload('res://scene/techtree-item.tscn')
 
 export(float, 32, 256) var radius = 96
@@ -19,6 +19,7 @@ signal button_pressed(node_data)
 
 func _ready():
 	tween_node.start()
+	test_tech_tree()
 
 func clear():
 	# Reset current tween
@@ -82,12 +83,9 @@ func initialize(data, nb_root):
 			var side_angle = (180 - base_angle) / 2.0
 			var base_length = nb_child * node_data.node.get_size().x * 1.05
 			var current_radius = max(radius, base_length * sin(deg2rad(side_angle)) / sin(deg2rad(base_angle)))
-			print("---------")
 			var angle_decal = angle_index * base_angle / nb_child
-			printt(angle_decal,angle_index)
 			if nb_child > 1:
 				angle_decal -= current_rotation_angle / (node_data.deep * 2.0)
-			printt(parent_angle,base_angle,angle_decal)
 			node_data.angle = parent_angle + angle_decal
 			node_center_point = node_center_point + Vector2(0.0, current_radius).rotated(deg2rad(node_data.angle))
 			node_data.pos = node_center_point
@@ -124,3 +122,67 @@ func _draw():
 				color = parent_node.line.color.disabled
 
 			draw_line(node_pos, parent_pos, color, node_data.line.width)
+
+func test_tech_tree():
+	var nb_points_to_create = 12
+	var nb_root_to_create = 6
+	var points_to_create = []
+
+	for root_index in range(0, nb_root_to_create):
+		var previous_point = create_point()
+
+		points_to_create.append(previous_point)
+
+		for node_index in range(0, nb_points_to_create):
+			var point = null
+			randomize()
+			if (randi() % 8) == 1:
+				previous_point = create_point(previous_point)
+				point = previous_point
+			else:
+				point = create_point(previous_point)
+
+			randomize()
+			if (randi() % 5) == 1:
+				point.disabled = true
+
+			points_to_create.append(point)
+
+	initialize(points_to_create, nb_root_to_create)
+
+func create_point(parent = null):
+	var  line_color_enabled = Color.white
+	var  line_color_disabled = Color.gray
+	var line_width = 1.0
+	var icon = preload("res://texture/icon.png")
+	var icon_disabled = preload("res://texture/icon-disabled.png")
+	var icon_activated = preload("res://texture/icon-activated.png")
+
+	var disabled = false
+
+	if parent != null:
+		disabled = parent.disabled
+
+	var node = {
+		root = (parent == null),
+		parent = parent,
+		disabled = disabled,
+		textures = {
+			normal = icon,
+			disabled = icon_disabled,
+			activated = icon_activated
+		},
+		tooltip = {
+			enabled = 'enabled',
+			disabled = 'disabled'
+		},
+		metadata = {},
+		line = {
+				color = {
+				enabled = line_color_enabled,
+				disabled = line_color_disabled
+				},
+				width = line_width
+			}
+	}
+	return node

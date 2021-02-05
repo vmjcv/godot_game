@@ -18,8 +18,8 @@ tracks/0/keys = {
 }
 
 [node name="main" type="ReferenceRect"]
-margin_right = 128.0
-margin_bottom = 128.0
+anchor_right = 1.0
+anchor_bottom = 1.0
 rect_min_size = Vector2( 128, 128 )
 size_flags_horizontal = 2
 size_flags_vertical = 2
