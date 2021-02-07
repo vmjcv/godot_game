@@ -2,8 +2,7 @@ docs_dir: docs
 markdown_extensions:
 - admonition
 pages:
-- API:
-  - BaseNode: api\test1\test_api.md
+- API: []
 repo_url: https://github.com/vmjcv/godot_game
 site_name: godot_game
 theme: material

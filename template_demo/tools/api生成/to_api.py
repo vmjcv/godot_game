@@ -6,6 +6,7 @@ import re
 from enum import Enum
 import collections
 import yaml
+import glob
 # step1 加载代码文件,删除除注释以外的代码,保存类中的公共变量,公共信号,公共方法,继承对象中的暴露方法等
 # step2 生成md文件
 # step3 生成网址并打开
@@ -19,11 +20,16 @@ class Parse():
 
     def get_all_class(self,):
         file_path=[]
-        for root, dirs, files in os.walk(self.m_code_dir):
-            for name in files:
+                  
+        exclude = set(['addons'])
+        extensions = set(['.gd'])
+        for root, dirs, files in os.walk(self.m_code_dir, topdown=True):
+            dirs[:] = [d for d in dirs if d not in exclude]
+            files = [file for file in files if os.path.splitext(file)[1] in extensions]
+            for fname in files:
                 gdpath=os.path.join(root, name)
-                if os.path.splitext(gdpath)[1] == '.gd':
-                    file_path.append(gdpath)
+                file_path.append(gdpath)
+                  
 
         for path in file_path:
             self.class_node[path] = ClassNode(path,self.m_code_dir)
@@ -241,9 +247,6 @@ def find_line(matchObj,base_str):
     pos = matchObj.start()
     pattern = re.compile(r'\n')
     result = pattern.findall(base_str,pos)
-
-
-
     return len(result)
 
 class ClassNode():
@@ -343,7 +346,7 @@ class ClassNode():
         for matchObj in it:
             line = find_line(matchObj,script_base_str)
             self.enum[matchObj.group(1)] = {"info":matchObj.group(3)}
-            self.enum[matchObj.group(1)]["params"] =collections.OrderedDict()
+            self.enum[matchObj.group(1)]["params"] = collections.OrderedDict()
             init = 0
             pattern2 = re.compile(r'[ ]*(\w+)[ ]*(?:=[ ]*([0-9+-]*)[ ]*){0,1},{0,1}',re.M)
             it2 = re.finditer(pattern2, matchObj.group(2), flags=0)
@@ -416,7 +419,8 @@ class ClassNode():
         pattern = re.compile(r'^#(.*)$\n',re.M)
         script_str=re.sub(pattern,"",script_str)
 
-
+        print(script_str)
+        print(r'^func[ ]+([A-Za-z0-9]\w*)[^\(.]*\((.*)\).*:[ ]*$(.*)(?=(\n\w)|(\n\n))')
         pattern = re.compile(r'^func[ ]+([A-Za-z0-9]\w*)[^\(.]*\((.*)\).*:[ ]*$(.*)(?=(\n\w)|(\n\n))',re.M|re.S)
         it = re.finditer(pattern, script_str, flags=0)
         for matchObj in it:
