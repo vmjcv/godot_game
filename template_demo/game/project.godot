@@ -1,0 +1,70 @@
+; Engine configuration file.
+; It's best edited using the editor UI and not directly,
+; since the parameters that go here are not all obvious.
+;
+; Format:
+;   [section] ; section goes between []
+;   param=value ; assign values to parameters
+
+config_version=4
+
+_global_script_classes=[ {
+"base": "Control",
+"class": "CSVEditor",
+"language": "GDScript",
+"path": "res://addons/file-editor/scripts/CSVEditor.gd"
+}, {
+"base": "HTTPRequest",
+"class": "GoogleTranslateAPI",
+"language": "GDScript",
+"path": "res://addons/file-editor/scripts/GoogleTranslatorAPI.gd"
+}, {
+"base": "Resource",
+"class": "LocalizationData",
+"language": "GDScript",
+"path": "res://addons/localization_editor/model/LocalizationData.gd"
+}, {
+"base": "Reference",
+"class": "LocalizationManagerKeys",
+"language": "GDScript",
+"path": "res://addons/localization_editor/LocalizationManagerKeys.gd"
+}, {
+"base": "Reference",
+"class": "LocalizationManagerPlaceholders",
+"language": "GDScript",
+"path": "res://addons/localization_editor/LocalizationManagerPlaceholders.gd"
+}, {
+"base": "Button",
+"class": "LongClickButton",
+"language": "GDScript",
+"path": "res://addons/LongClickButton/script/long_click_button.gd"
+} ]
+_global_script_class_icons={
+"CSVEditor": "",
+"GoogleTranslateAPI": "",
+"LocalizationData": "",
+"LocalizationManagerKeys": "",
+"LocalizationManagerPlaceholders": "",
+"LongClickButton": ""
+}
+
+[application]
+
+config/name="Game"
+config/icon="res://icon.png"
+
+[autoload]
+
+LastOpenedFiles="*res://addons/file-editor/scripts/LastOpenedFiles.gd"
+
+[editor_plugins]
+
+enabled=PoolStringArray( "FileSystemView", "LongClickButton", "file-editor", "localization_editor" )
+
+[locale]
+
+translations=PoolStringArray(  )
+
+[rendering]
+
+environment/default_environment="res://default_env.tres"
