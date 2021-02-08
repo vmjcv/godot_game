@@ -275,7 +275,7 @@ LastOpenedFiles="*res://addons/file-editor/scripts/LastOpenedFiles.gd"
 
 [editor_plugins]
 
-enabled=PoolStringArray( "FileSystemView", "LongClickButton", "file-editor", "godot-next", "localization_editor" )
+enabled=PoolStringArray( "FileSystemView", "LongClickButton", "file-editor", "godot-next", "localization_editor", "ui_design_tool" )
 
 [locale]
 
