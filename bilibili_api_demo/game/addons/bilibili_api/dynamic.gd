@@ -105,11 +105,11 @@ func instant_draw(http_request,text,images_path,verify):
 	var resp = util.bilibili_post(http_request,api["url"], verify.get_cookies(),data)
 	return resp
 
-func schedule(http_request,type_,text,images_path,verify):
+func schedule(http_request,type_,text,images_path,send_time,verify):
 	var api = API["dynamic"]["send"]["schedule"]
 	var request
 	if type_==4:
-		request =__get_draw_data(text, images_path, verify)
+		request =__get_draw_data(http_request,text, images_path, verify)
 		request.pop("setting")
 	elif type_==2:
 		request =__get_text_data(text, verify)
@@ -118,7 +118,7 @@ func schedule(http_request,type_,text,images_path,verify):
 
 	var data = {
 		"type": type_,
-		"publish_time": int(send_time.timestamp()),
+		"publish_time": int(send_time),
 		"request": to_json(request),
 		"csrf_token": verify.csrf
 	}
@@ -126,7 +126,7 @@ func schedule(http_request,type_,text,images_path,verify):
 	return resp
 
 
-func send_dynamic(http_request,text,images_path=null,send_time=null,verift=null):
+func send_dynamic(http_request,text,images_path=null,send_time=null,verify=null):
 	if not verify:
 		verify = util.Verify()
 	if not verify.has_sess():
@@ -142,14 +142,14 @@ func send_dynamic(http_request,text,images_path=null,send_time=null,verift=null)
 		if not send_time:
 			ret = instant_text(http_request,text,verify)
 		else:
-			ret = schedule(http_request,2,text,images_path,verify)
+			ret = schedule(http_request,2,text,images_path,send_time,verify)
 	else:
 		if len(images_path)>9:
 			push_error("最多上传9张图片")
 		if not send_time:
 			ret = instant_draw(http_request,text,images_path,verify)
 		else:
-			ret = schedule(http_request,4,text,images_path,verify)
+			ret = schedule(http_request,4,text,images_path,send_time,verify)
 	return ret
 
 func get_schedules_list(http_request,verify=null):
@@ -231,13 +231,13 @@ func get_reposts_r(http_request,dynamic_id,verify=null):
 		if not ("items" in data):
 			break
 		var items = data["items"]
-		for v in items:
+		for i in items:
 			i["card"] = to_json(i["card"])
 			i["extend_json"] = to_json(i["extend_json"])
 			result_data.append(i)
 		if not ("offset" in data):
 			break
-		offser = data["offset"]
+		offset = data["offset"]
 	return result_data
 
 
@@ -252,6 +252,7 @@ func set_like(http_request,dynamic_id,status=true, verify=null):
 		push_error(util.MESSAGES["no_csrf"])
 
 	var api = API["dynamic"]["operate"]["like"]
+	var self_uid =  user.get_self_info(verify)["mid"]
 
 	var data = {
 		"dynamic_id": dynamic_id,
@@ -307,8 +308,8 @@ const TYPE_MAP = {
     4: "dynamic_text"
 }
 
-func __get_type_and_rid(dynamic_id):
-	var dy_info = get_info(dunamic_id)
+func __get_type_and_rid(http_request,dynamic_id):
+	var dy_info = get_info(http_request,dynamic_id)
 	var type_ = TYPE_MAP.get(dy_info["desc"]["type"],TYPE_MAP[4])
 	var rid =  dynamic_id
 	if type_ == "dynamic_draw":
@@ -316,42 +317,42 @@ func __get_type_and_rid(dynamic_id):
 	return [type_,rid]
 
 func get_comments_g(http_request,dynamic_id,order="time",verify=null):
-	var type_and_rid = __get_type_and_rid(dynamic_id)
+	var type_and_rid = __get_type_and_rid(http_request,dynamic_id)
 	var type_=type_and_rid[0]
 	var rid=type_and_rid[1]
 	var replies = common.get_comments(http_request,rid,type_,order,verify)
 	return replies
 
 func get_sub_comments_g(http_request,dynamic_id,root,verify=null):
-	var type_and_rid = __get_type_and_rid(dynamic_id)
+	var type_and_rid = __get_type_and_rid(http_request,dynamic_id)
 	var type_=type_and_rid[0]
 	var rid=type_and_rid[1]
 	var replies = common.get_sub_comments(http_request,rid,type_,root,verify)
 	return replies
 
 func send_comment(http_request,text,dynamic_id,root=null,parent=null,verify=null):
-	var type_and_rid = __get_type_and_rid(dynamic_id)
+	var type_and_rid = __get_type_and_rid(http_request,dynamic_id)
 	var type_=type_and_rid[0]
 	var rid=type_and_rid[1]
 	var resp = common.send_comment(http_request,text, rid, type_, root, parent,verify)
 	return resp
 
 func set_like_comment(http_request,rpid,dynamic_id,status=true,verify=null):
-	var type_and_rid = __get_type_and_rid(dynamic_id)
+	var type_and_rid = __get_type_and_rid(http_request,dynamic_id)
 	var type_=type_and_rid[0]
 	var rid=type_and_rid[1]
 	var resp = common.operate_comment(http_request,"like", rid, type_, rpid, status, verify)
 	return resp
 
 func set_hate_comment(http_request,rpid,dynamic_id,status=true,verify=null):
-	var type_and_rid = __get_type_and_rid(dynamic_id)
+	var type_and_rid = __get_type_and_rid(http_request,dynamic_id)
 	var type_=type_and_rid[0]
 	var rid=type_and_rid[1]
 	var resp = common.operate_comment(http_request,"hate", rid, type_, rpid, status, verify)
 	return resp
 
 func set_top_comment(http_request,rpid,dynamic_id,status=true,verify=null):
-	var type_and_rid = __get_type_and_rid(dynamic_id)
+	var type_and_rid = __get_type_and_rid(http_request,dynamic_id)
 	var type_=type_and_rid[0]
 	var rid=type_and_rid[1]
 	var resp = common.operate_comment(http_request,"top", rid, type_, rpid, status, verify)
@@ -359,7 +360,7 @@ func set_top_comment(http_request,rpid,dynamic_id,status=true,verify=null):
 
 
 func del_comment(http_request,rpid,dynamic_id,verify=null):
-	var type_and_rid = __get_type_and_rid(dynamic_id)
+	var type_and_rid =__get_type_and_rid(http_request,dynamic_id)
 	var type_=type_and_rid[0]
 	var rid=type_and_rid[1]
 	var resp = common.operate_comment(http_request,"del", rid, type_, rpid, verify)
