@@ -106,3 +106,20 @@ func get_download_url(http_request,bvid=null,aid=null,page=0,verify=null):
 		}
 		playurl = util.bilibili_get(http_request,url, params, verify.get_cookies())
 	return playurl
+
+
+func get_related(http_request,bvid,aid=null,verify=null):
+	if not (aid or bvid):
+		push_error("no aid or bvid")
+
+	if not verify:
+		verify = util.Verify()
+
+
+	var api = API["video"]["info"]["related"]
+	var params = {
+		"aid": aid,
+		"bvid": bvid
+	}
+	var data = util.bilibili_get(http_request,api["url"], params, verify.get_cookies())
+	return data
