@@ -198,7 +198,7 @@ func get_favorite_list_old(http_request,up_mid,rid,type_,ps=100,pn=1, verify=nul
 	return resp
 
 
-func get_favorite_list(http_request,up_mid,rid,type_, verify=null):
+func get_favorite_list(http_request,up_mid=null,rid=null,type_=null, verify=null):
 	if not verify:
 		verify = util.Verify()
 	if rid:

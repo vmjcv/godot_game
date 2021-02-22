@@ -229,7 +229,7 @@ class BilibiliColor:
 
 		self.__color = (r<<8*2)+(g<<8)+b
 
-	func set_dex_color(color):
+	func set_dec_color(color):
 		self.__color=clamp(color,0,16777215)
 
 	func get_hex_color():

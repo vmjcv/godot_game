@@ -403,11 +403,6 @@ func get_overview(http_request,uid,verify=null):
 	var data = util.bilibili_get(http_request,api["url"], params, verify.get_cookies())
 	return data
 
-
-
-
-
-
 func set_subscribe(http_request,uid,status=true, whisper=false,verify=null):
 	if not verify:
 		verify = util.Verify()
