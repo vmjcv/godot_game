@@ -1,20 +1,19 @@
 extends Control
 
 
-# Declare member variables here. Examples:
-# var a = 2
-# var b = "text"
 
-onready var room = $"Node"
-var thread
+onready var roomid = $"VBoxContainer/HBoxContainer/LineEdit"
+onready var connect_node = $"Node"
+onready var msg_panel = $"VBoxContainer/ScrollContainer/VBoxContainer"
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	print("22222222222")
-	thread = Thread.new()
-	thread.start(room,"connect_room")
-	pass # Replace with function body.
+	connect_node.print_panel = self
 
 
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-#func _process(delta):
-#	pass
+func _on_Button_pressed():
+	connect_node.connect_room(int(roomid.text))
+
+func get_msg(msg):
+	var label = Label.new()
+	label.text = var2str(msg)
+	msg_panel.call_deferred("add_child",label)

@@ -22,6 +22,10 @@ config/icon="res://icon.png"
 
 singletons=[ "res://pythonscript.gdnlib" ]
 
+[gui]
+
+theme/custom="res://game_theme.tres"
+
 [rendering]
 
 environment/default_environment="res://default_env.tres"
